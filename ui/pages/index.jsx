@@ -12,10 +12,12 @@ import { ethers } from "ethers";
 
 export default function Home() {
 	const [selectedAmount, setSelectedAmount] = useState(1);
+	const [userAddr, setUserAddr] = useState("");
 	const [price, setPrice] = useState(0);
 	const [hash, setHash] = useState(null);
 	const {data: signer} = useSigner();
 	const account = useAccount();
+	
 
 	const premintInstance = useContract({
 		address: '0x6241E4732147C5Ed2B6C1C602286D78a26b704fa',
@@ -714,7 +716,7 @@ export default function Home() {
 
 		
 		const msgParams = {
-			account: '0x64349b7064c539187D79e3775823D713560c2e43',
+			account: userAddr,
 		}
 
 
@@ -763,13 +765,29 @@ export default function Home() {
 				<div className={styles.logo_container}></div>
 			</header>
 			<main className={styles.main}>
-				<div className="flex">
-				<button className="w-24 mb-4 rounded-lg p-3 bg-gradient-to-t from-red-400 to-red-700 items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-red-500 focus:ring-offset-red-300"
+			<div className="container items-center text-center mx-auto border rounded-3xl bg-slate-600">
+			<h1 className="text-3xl text-cyan-200 font-medium text-center ">
+				🔥 Development Notes 🔥
+			</h1>
+					<div className="text-center">
+					<p className="text-white text-lg "> Currently the signing person is just whoever is connected via metamask. The contract is currently comparing against foundry's account[0]</p>
+					<p className="text-white text-lg "> The private key for that address is <code>0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80</code>. </p>
+					<p className="text-white text-lg "> Import it into metamask and you can sign for any address. </p>
+					</div>
+			</div>
+				<div className="flex mt-5 justify-between">
+					<input
+						className="rounded-2xl w-96 p-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-gray-500 focus:ring-offset-gray-300"
+						type="text"
+						placeholder="0x"
+						onChange={(e) => {setUserAddr(e.target.value);}}
+					/>
+				<button className="w-24 h-14 mb-4 ml-5 rounded-2xl p-3 bg-gradient-to-t from-red-400 to-red-700 items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-red-500 focus:ring-offset-red-300"
 						onClick={(e) => handleSignature(e)}
 					> sign </button>
 					
 					</div>
-				<div className="container mx-auto w-44 items-center text-center bg-red-600 bg-opacity-25">
+				<div className="container mt-5  mx-auto w-44 items-center text-center bg-red-600 bg-opacity-25">
 					<div className="">
 						<div className="container border p-2">
 							<div className="flex flex-col h-full justify-between">
