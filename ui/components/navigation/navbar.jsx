@@ -818,7 +818,7 @@ useEffect(() => {
                     </div>
 			</a>
 			{admin ? <Link href="admin">
-				<button className="w-24 h-14 mb-4 ml-5 rounded-2xl p-3 bg-gradient-to-t from-red-400 to-red-700 items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-red-500 focus:ring-offset-red-300"
+				<button className="w-24 h-14 mb-4 ml-5 rounded-2xl text-lg p-3 bg-gradient-to-t from-red-400 to-red-700 items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-red-500 focus:ring-offset-red-300"
 				>
 				Admin
 			</button>
@@ -826,7 +826,9 @@ useEffect(() => {
 			: null
 			}
 
-			<ConnectButton></ConnectButton>
+			<div>
+			<ConnectButton/>
+			</div>
 		</nav>
 	);
 }
