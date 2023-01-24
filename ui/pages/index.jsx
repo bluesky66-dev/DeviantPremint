@@ -802,7 +802,8 @@ export default function Home() {
 										<input
 											type="number"
 											className="w-20 font-semibold text-white text-center justify-center align-middle text-gray-700 bg-red-200 outline-none focus:bg-white hover:text-black focus:text-black"
-											value={selectedAmount}
+											value={selectedAmount ? selectedAmount.toString() : "0"}
+											onChange={() => {setSelectedAmount(e.target.value);}}
 										/>
 										<button className="flex text-red-500 border rounded border-gray-400 hover:border-gray-500 hover:text-gray-600 h-10 w-10 justify-center items-center outline-none"
 										>
@@ -812,12 +813,10 @@ export default function Home() {
 										</button>
 									</div>
 								</div>
-								{/* price */}
 								<div className="text-xl text-white text-center">
 									Price: {price ? price : "0"}Ξ
 								</div>
 
-								{/* Buy Button */}
 								<button
 									className="bg-red-500 text-white mb-1 w-full py-2 px-1 border border-red-200 rounded text-base hover:bg-red-400"
 									onClick={(e) => handleMint(e)}
