@@ -20,7 +20,7 @@ export default function admin() {
 	
 
 	const premintInstance = useContract({
-		address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+		address: '0xdDb46e6A223B6C5D91A8E02D66Bfc43C16fCc22C',
 		abi: [
 			{
 			  "inputs": [],
@@ -834,8 +834,8 @@ export default function admin() {
 		const domain = {
 			name: 'Deviants Silver Pass',
 			version: '1',
-			chainId: 31337,
-			verifyingContract: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+			chainId: 80001,
+			verifyingContract: '0xdDb46e6A223B6C5D91A8E02D66Bfc43C16fCc22C'
 		}
 
 

@@ -19,7 +19,7 @@ export default function Home() {
 	
 
 	const premintInstance = useContract({
-		address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+		address: '0xdDb46e6A223B6C5D91A8E02D66Bfc43C16fCc22C',
 		abi: [
 			{
 			  "inputs": [],
@@ -807,8 +807,6 @@ export default function Home() {
 			console.log(receipt);
 		}
 	}
-
-	
 
 	function priceSetter() {
 		if(selectedAmount == 1) {
