@@ -19,7 +19,7 @@ export default function Home() {
 	
 
 	const premintInstance = useContract({
-		address: '0xdDb46e6A223B6C5D91A8E02D66Bfc43C16fCc22C',
+		address: '0xb46621a17DD1e80BbB8940804509E5222D7c749b',
 		abi: [
 			{
 			  "inputs": [],
@@ -794,6 +794,78 @@ export default function Home() {
 		signerOrProvider: signer,
 	});
 
+	async function handleAirdrop(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		
+		if(!addrs || !amounts) {
+			console.log("address or amount error")
+		}
+
+		let receipt = await premintInstance.airdrop(addrs,amounts);
+		console.log(receipt);
+	}
+
+	function collectAddressArray(addressArray) {
+		addressArray = addressArray.split(",")
+		setAddrs(addressArray)
+		console.log(addressArray)
+	}
+
+	function collectAmountArray(amountArray) {
+		amountArray = amountArray.split(",")
+		setAmounts(amountArray)
+		console.log(amountArray)
+	}
+
+
+	async function handleSignature(e) {
+		e.stopPropagation();
+		e.preventDefault();
+
+		
+		const msgParams = {
+			account: userAddr,
+		}
+
+
+
+		const domain = {
+			name: 'Deviants Silver Pass',
+			version: '1',
+			chainId: 80001,
+			verifyingContract: '0xb46621a17DD1e80BbB8940804509E5222D7c749b'
+		}
+
+
+
+
+		const types = {
+			NFT: [
+				{
+					name: 'account', type: 'address',
+				},
+			],
+		} 
+
+		try {
+			const sign = await signer._signTypedData(domain, types, msgParams);
+			console.log(sign);
+			setHash(sign);
+
+			const recovered = ethers.utils.verifyTypedData(
+				domain,
+				types,
+				msgParams,
+				sign
+			)
+
+			console.log("Recovered signer: " + recovered)
+		} catch(err) {
+			console.log(err);
+		}
+	}
+
 	async function handleMint(e) {
 		e.stopPropagation();
 		e.preventDefault();
@@ -833,6 +905,52 @@ export default function Home() {
 		<div>
 
 			<main className={styles.main}>
+			<div className="flex mt-5 justify-between">
+					<input
+						className="rounded-2xl w-96 p-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-gray-500 focus:ring-offset-gray-300"
+						type="text"
+						placeholder="0x"
+						onChange={(e) => {setUserAddr(e.target.value);}}
+					/>
+				<button className="w-24 h-14 mb-4 ml-5 rounded-2xl p-3 bg-gradient-to-t from-red-400 to-red-700 items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-red-500 focus:ring-offset-red-300"
+						onClick={(e) => handleSignature(e)}
+					> sign </button>
+					
+					</div>
+					
+					<div className="items-center text-center mx-auto my-7 border rounded-3xl bg-slate-600">
+						<h1 className="text-3xl text-cyan-200 font-medium text-center ">
+							Airdrop
+						</h1>
+						<div className="text-center">
+						<p className="text-white text-lg ">• Eg: 0x1111,0x2222,0x3333</p>
+						<p className="text-white text-lg ">• Values can't be zero </p>
+						<p className="text-white text-lg ">• Lengths must match</p>
+						<p className="text-white text-lg ">• No Spaces!</p>
+						</div>
+                        <div className="flex mt-5 justify-between">
+						<div className="flex flex-col">
+						<input
+							className="rounded-2xl w-96 p-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-gray-500 focus:ring-offset-gray-300"
+							type="text"
+							placeholder="Addresses (Comma Separated)"
+							onChange={(e) => {collectAddressArray(e.target.value);}}
+						/>
+						<input
+							className="rounded-2xl mt-5  w-96 p-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-gray-500 focus:ring-offset-gray-300"
+							type="text"
+							placeholder="Amounts (Comma Separated)"
+							onChange={(e) => {collectAmountArray(e.target.value);}}
+						/>
+						<button
+							className="w-24 mt-5 text-center h-14 mb-4 ml-5 rounded-2xl self-center bg-gradient-to-t from-green-400 to-green-700 items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-green-500 focus:ring-offset-green-300"
+							onClick={(e) => handleAirdrop(e)}
+						> Drop Em! </button>
+						</div>
+					</div>
+					
+				</div>
+
 				<div className="container mt-5  mx-auto w-44 items-center text-center bg-red-600 bg-opacity-25">
 					<div className="">
 						<div className="container border p-2">

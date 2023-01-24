@@ -20,7 +20,7 @@ export default function Navbar() {
 	const {data: signer} = useSigner()
 	const [admin, setAdmin] = useState(false);
 	const premintInstance = useContract({
-		address: '0xdDb46e6A223B6C5D91A8E02D66Bfc43C16fCc22C',
+		address: '0xb46621a17DD1e80BbB8940804509E5222D7c749b',
 		abi: [
 			{
 			  "inputs": [],
