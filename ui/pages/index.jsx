@@ -19,7 +19,7 @@ export default function Home() {
 	const sigGiver = '0x7C5D8BC73041B16d6Fac2E3F2a8dE2F6397eC839';
 
 	const premintInstance = useContract({
-		address: "0x5966ad8d46B416811b10b836832D789113F08ee6",
+		address: "0x98b5F17230D38c5471b6EF8305a65e3780d05675",
 		abi: [
 			{
 			  "inputs": [],
@@ -824,7 +824,7 @@ export default function Home() {
 		name: "Deviants Silver Pass",
 		version: "1",
 		chainId: 80001,
-		verifyingContract: "0x5966ad8d46B416811b10b836832D789113F08ee6",
+		verifyingContract: "0x98b5F17230D38c5471b6EF8305a65e3780d05675",
 	};
 
 	const types = {
