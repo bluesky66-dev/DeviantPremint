@@ -839,7 +839,9 @@ export default function Home() {
 	async function handleMint(e) {
 		e.stopPropagation();
 		e.preventDefault();
-		if (selectedAmount == 2) {
+
+		const bal = await premintInstance.balanceOf(account.address);
+		if (bal == 0x01) {
 			let costCharge = 3500000000000000;
 			let receipt = await premintInstance.redeem(
 				account.address,
