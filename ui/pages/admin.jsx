@@ -20,7 +20,7 @@ export default function admin() {
 	
 
 	const premintInstance = useContract({
-		address: '0xd60aF9B7a70a62bc708FF91cd2DAa1674e5CB1A9',
+		address: '0x4c85686AD1769f54D6D92e2509A84261A7d04e9b',
 		abi: [
 			{
 			  "inputs": [],
