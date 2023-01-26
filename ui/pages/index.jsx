@@ -1,10 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import {
-	useContract,
-	useAccount,
-	useSigner,
-} from "wagmi";
+import { useContract, useAccount, useSigner } from "wagmi";
 import { ethers } from "ethers";
 
 export default function Home() {
@@ -13,13 +9,17 @@ export default function Home() {
 	const [addrs, setAddrs] = useState("");
 	const [amounts, setAmounts] = useState(0);
 	const [price, setPrice] = useState(0);
+	const [whitelisted, setWhitelisted] = useState(false);
+	const [numChecks, setNumChecks] = useState(0);
+	const [wlAddr, setWlAddr] = useState('');
 	const [hash, setHash] = useState(null);
-	const {data: signer} = useSigner();
+	const { data: signer } = useSigner();
 	const account = useAccount();
-	
+
+	const sigGiver = '0x7C5D8BC73041B16d6Fac2E3F2a8dE2F6397eC839';
 
 	const premintInstance = useContract({
-		address: '0xb46621a17DD1e80BbB8940804509E5222D7c749b',
+		address: "0xd60aF9B7a70a62bc708FF91cd2DAa1674e5CB1A9",
 		abi: [
 			{
 			  "inputs": [],
@@ -797,160 +797,168 @@ export default function Home() {
 	async function handleAirdrop(e) {
 		e.stopPropagation();
 		e.preventDefault();
-		
-		if(!addrs || !amounts) {
-			console.log("address or amount error")
+
+		if (!addrs || !amounts) {
+			console.log("address or amount error");
 		}
 
-		let receipt = await premintInstance.airdrop(addrs,amounts);
+		let receipt = await premintInstance.airdrop(addrs, amounts);
 		console.log(receipt);
 	}
 
 	function collectAddressArray(addressArray) {
-		addressArray = addressArray.split(",")
-		setAddrs(addressArray)
-		console.log(addressArray)
+		addressArray = addressArray.split(",");
+		setAddrs(addressArray);
+		console.log(addressArray);
 	}
 
 	function collectAmountArray(amountArray) {
-		amountArray = amountArray.split(",")
-		setAmounts(amountArray)
-		console.log(amountArray)
+		amountArray = amountArray.split(",");
+		setAmounts(amountArray);
+		console.log(amountArray);
 	}
 
 
-	async function handleSignature(e) {
-		e.stopPropagation();
-		e.preventDefault();
 
-		
-		const msgParams = {
-			account: userAddr,
-		}
+	const domain = {
+		name: "Deviants Silver Pass",
+		version: "1",
+		chainId: 80001,
+		verifyingContract: "0xd60aF9B7a70a62bc708FF91cd2DAa1674e5CB1A9",
+	};
 
-
-
-		const domain = {
-			name: 'Deviants Silver Pass',
-			version: '1',
-			chainId: 80001,
-			verifyingContract: '0xb46621a17DD1e80BbB8940804509E5222D7c749b'
-		}
-
-
-
-
-		const types = {
-			NFT: [
-				{
-					name: 'account', type: 'address',
-				},
-			],
-		} 
-
-		try {
-			const sign = await signer._signTypedData(domain, types, msgParams);
-			console.log(sign);
-			setHash(sign);
-
-			const recovered = ethers.utils.verifyTypedData(
-				domain,
-				types,
-				msgParams,
-				sign
-			)
-
-			console.log("Recovered signer: " + recovered)
-		} catch(err) {
-			console.log(err);
-		}
-	}
+	const types = {
+		NFT: [
+			{
+				name: "account",
+				type: "address",
+			},
+		],
+	};
 
 	async function handleMint(e) {
 		e.stopPropagation();
 		e.preventDefault();
-		console.log(premintInstance)
-		if(selectedAmount == 2) {
-		let costCharge = 3500000000000000
-		let receipt = await premintInstance.redeem(account.address, selectedAmount, hash, {value: costCharge});
-		console.log(receipt);
-		}else{
-			let receipt = await premintInstance.redeem(account.address, selectedAmount, hash, {value: 0});
+		if (selectedAmount == 2) {
+			let costCharge = 3500000000000000;
+			let receipt = await premintInstance.redeem(
+				account.address,
+				selectedAmount,
+				hash,
+				{ value: costCharge }
+			);
+			console.log(receipt);
+		} else {
+			let receipt = await premintInstance.redeem(
+				account.address,
+				selectedAmount,
+				hash,
+				{ value: 0 }
+			);
 			console.log(receipt);
 		}
 	}
 
 	function priceSetter() {
-		if(selectedAmount == 1) {
-			setSelectedAmount(2)
-			setPrice(0.0035)
-		}else if(selectedAmount == 2) {
-			setSelectedAmount(1)
-			setPrice(0)
+		if (selectedAmount == 1) {
+			setSelectedAmount(2);
+			setPrice(0.0035);
+		} else if (selectedAmount == 2) {
+			setSelectedAmount(1);
+			setPrice(0);
 		}
 	}
 
 	function priceDecreaser() {
-		if(selectedAmount == 2) {
-			setSelectedAmount(1)
-			setPrice(0)
-		}else{
-			setSelectedAmount(2)
-			setPrice(0.0035)
+		if (selectedAmount == 2) {
+			setSelectedAmount(1);
+			setPrice(0);
+		} else {
+			setSelectedAmount(2);
+			setPrice(0.0035);
 		}
 	}
+
+	function verify() {
+		setNumChecks(numChecks+1);
+		const msgParams = {
+			account: account.address,
+		};
+		try{
+			const recovered = ethers.utils.verifyTypedData(
+				domain,
+				types,
+				msgParams,
+				hash
+			);
+			
+			if(recovered == sigGiver) {
+				setWhitelisted(true);
+				alert("Whitelist status: You're in!")
+			}else{
+				setWhitelisted(false);
+				alert("Whitelist status: You never made the cut!")
+			}
+		}catch(e){
+			setWhitelisted(false);
+			alert("Whitelist status: You never made the cut!")
+		}
+	}
+
+	async function getAddrStatus(addr) {
+		const isWL = await fetch(`https://dmb-six.vercel.app/api/getSignature?address=${addr}`, {method:'GET'})
+		
+		const WL = await isWL.json();
+
+		if(WL.signature !== null){
+			setWhitelisted(true)
+			setHash(WL.signature);
+		}else if(WL.status === 205){
+			setWhitelisted(false)
+		}
+	}
+
+	useEffect(() => {
+		getAddrStatus(account.address);
+	},[])
 
 
 	return (
 		<div>
+			<div>
+				<div>
+					<header className="">
+						<h1 className="text-3xl mt-10 pt-14 text-yellow-400 text-left font-medium ">
+							🔥 Whitelist Checker 🔥
+						</h1>
+					</header>
+					<div>
+						<div>
+							<div className="w-2/5">
+
+								<div className="flex">
+								<button
+									onClick={(e) => {
+										verify(e);
+									}}
+									className="w-36 p-3 rounded-2xl text-white bg-gradient-to-t from-red-400 to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-300 focus:ring-red-500"
+								>
+									Check Status
+								</button>
+								{/* Ticker that counts how many times the check status button has been clicked */}
+									<div className="ml-5 p-3 border rounded-2xl bg-gradient-to-t from-red-400 to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-300 focus:ring-red-500">
+									<p className="text-base text-white font-semibold">
+									Number of Checks: {numChecks}
+									</p>										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
 			<main className={styles.main}>
-			<div className="flex mt-5 justify-between">
-					<input
-						className="rounded-2xl w-96 p-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-gray-500 focus:ring-offset-gray-300"
-						type="text"
-						placeholder="0x"
-						onChange={(e) => {setUserAddr(e.target.value);}}
-					/>
-				<button className="w-24 h-14 mb-4 ml-5 rounded-2xl p-3 bg-gradient-to-t from-red-400 to-red-700 items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-red-500 focus:ring-offset-red-300"
-						onClick={(e) => handleSignature(e)}
-					> sign </button>
-					
-					</div>
-					
-					<div className="items-center text-center mx-auto my-7 border rounded-3xl bg-slate-600">
-						<h1 className="text-3xl text-cyan-200 font-medium text-center ">
-							Airdrop
-						</h1>
-						<div className="text-center">
-						<p className="text-white text-lg ">• Eg: 0x1111,0x2222,0x3333</p>
-						<p className="text-white text-lg ">• Values can't be zero </p>
-						<p className="text-white text-lg ">• Lengths must match</p>
-						<p className="text-white text-lg ">• No Spaces!</p>
-						</div>
-                        <div className="flex mt-5 justify-between">
-						<div className="flex flex-col">
-						<input
-							className="rounded-2xl w-96 p-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-gray-500 focus:ring-offset-gray-300"
-							type="text"
-							placeholder="Addresses (Comma Separated)"
-							onChange={(e) => {collectAddressArray(e.target.value);}}
-						/>
-						<input
-							className="rounded-2xl mt-5  w-96 p-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-gray-500 focus:ring-offset-gray-300"
-							type="text"
-							placeholder="Amounts (Comma Separated)"
-							onChange={(e) => {collectAmountArray(e.target.value);}}
-						/>
-						<button
-							className="w-24 mt-5 text-center h-14 mb-4 ml-5 rounded-2xl self-center bg-gradient-to-t from-green-400 to-green-700 items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-inset focus:ring-green-500 focus:ring-offset-green-300"
-							onClick={(e) => handleAirdrop(e)}
-						> Drop Em! </button>
-						</div>
-					</div>
-					
-				</div>
-
 				<div className="container mt-5  mx-auto w-44 items-center text-center bg-red-600 bg-opacity-25">
 					<div className="">
 						<div className="container border p-2">
@@ -959,19 +967,32 @@ export default function Home() {
 									Pass Quantity:
 									<div className="flex flex-row items-center justify-center mt-2">
 										<button className="flex mx-auto text-gray-500 border rounded border-gray-400 hover:border-gray-500 hover:text-gray-600 h-10 w-10 justify-center items-center outline-none">
-											<span className="text-2xl text-white font-thin" onClick={() => priceDecreaser()}>
+											<span
+												className="text-2xl text-white font-thin"
+												onClick={() => priceDecreaser()}
+											>
 												−
 											</span>
 										</button>
 										<input
 											type="number"
 											className="w-20 font-semibold text-white text-center justify-center align-middle text-gray-700 bg-red-200 outline-none focus:bg-white hover:text-black focus:text-black"
-											value={selectedAmount ? selectedAmount.toString() : "0"}
-											onChange={() => {setSelectedAmount(e.target.value);}}
+											value={
+												selectedAmount
+													? selectedAmount.toString()
+													: "0"
+											}
+											onChange={() => {
+												setSelectedAmount(
+													e.target.value
+												);
+											}}
 										/>
-										<button className="flex text-red-500 border rounded border-gray-400 hover:border-gray-500 hover:text-gray-600 h-10 w-10 justify-center items-center outline-none"
-										>
-											<span className="text-2xl text-white font-thin" onClick={() => priceSetter()}>
+										<button className="flex text-red-500 border rounded border-gray-400 hover:border-gray-500 hover:text-gray-600 h-10 w-10 justify-center items-center outline-none">
+											<span
+												className="text-2xl text-white font-thin"
+												onClick={() => priceSetter()}
+											>
 												+
 											</span>
 										</button>

@@ -53,12 +53,15 @@ contract SilverPass is ERC721, ERC721URIStorage, EIP712, AccessControl {
         _grantRole(MINTER_ROLE, TEAM);
         TEAM = msg.sender;
         teamAddrs[TEAM] = true;
+
         teamAddrs[0x1805c49AE4392F1DF411F665fDB5c6bD77b23D4a] = true;
         teamAddrs[0xabd43DAA71c365420f7c03ab90140CA5cC70b719] = true;
         teamAddrs[0x61611Be3dB30D0E960918aC4761d744a8D568647] = true;
+
         teamAddrs[0x9C480Cd02d8a2aE18De1C6ac96C8FA41C396b146] = true;
         teamAddrs[0xEE2C99D8D6ACB7940609fD6a9c5Ba2129fa43004] = true;
         teamAddrs[0xC4c282C70faABF0043FA2f7548DaCf676cfAb0CC] = true;
+        
     }
 
     modifier isUser() {
@@ -83,7 +86,7 @@ contract SilverPass is ERC721, ERC721URIStorage, EIP712, AccessControl {
             revert MaxOfTwo();
         }
 
-        if(amount == 2){
+        if(balanceOf(msg.sender) == 1 || amount == 2){
             require(msg.value == PRICE, "Must send 0.0035 ETH");
         }
 

@@ -20,7 +20,7 @@ export default function Navbar() {
 	const {data: signer} = useSigner()
 	const [admin, setAdmin] = useState(false);
 	const premintInstance = useContract({
-		address: '0xb46621a17DD1e80BbB8940804509E5222D7c749b',
+		address: '0xd60aF9B7a70a62bc708FF91cd2DAa1674e5CB1A9',
 		abi: [
 			{
 			  "inputs": [],
@@ -796,12 +796,20 @@ export default function Navbar() {
 	});
 
 useEffect(() => {
-	async function run() {
-			const isAdmin = await premintInstance.teamAddrs(account.address);
+	if(account){
+		async function run() {
+			try {
+				const isAdmin = await premintInstance.teamAddrs(account.address);
 			console.log(isAdmin, "isAdmin")
 				setAdmin(isAdmin);
+			}catch (e){
+				setAdmin(false)
+				console.log(false, "isAdmin")
+			}
 		}
-		run()
+	run()
+}
+
 }, [account]);
 
 	return (
