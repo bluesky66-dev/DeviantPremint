@@ -8,7 +8,6 @@ import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 
-import MainLayout from "../layout/mainLayout";
 
 
 const { chains, provider } = configureChains(
@@ -46,9 +45,7 @@ function MyApp({ Component, pageProps }) {
 			<RainbowKitProvider modalSize="large" coolMode chains={chains} theme={darkTheme({
 				accentColor: "#FF3300"
 			})}>
-				<MainLayout>
 					<Component {...pageProps} />
-				</MainLayout>
 			</RainbowKitProvider>
 		</WagmiConfig>
 	);

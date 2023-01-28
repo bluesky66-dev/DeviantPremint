@@ -1,1 +1,1 @@
-export const PremintAddr = '0xe7f1725e7734ce288f8367e1bb143e90bb3f0512'
+export const PremintAddr = '0x4d3598f36A5a00B54f638C94E7B3bA423F38B238'
