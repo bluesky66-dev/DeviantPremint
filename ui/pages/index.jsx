@@ -7,11 +7,12 @@ import "react-circular-progressbar/dist/styles.css";
 import alchemy from "../utils/alchemy";
 import abi from "../utils/abi.json";
 import { PremintAddr } from "../utils/addr";
-import background from '../public/background-min.png'
 import Background from "../components/navigation/background";
+import deviantSymbol from "../public/deviantSymbol.jpg";
 
 export default function Home() {
 	const [selectedAmount, setSelectedAmount] = useState(1);
+	const [balance, setBalance] = useState(1);
 	const [amountSold, setAmountSold] = useState(0);
 	const [userAddr, setUserAddr] = useState("");
 	const [price, setPrice] = useState(0);
@@ -87,7 +88,8 @@ export default function Home() {
 				selectedAmount,
 				hash,
 				{ value: costCharge }
-			);
+			)
+			addTokenToWallet();
 			console.log(receipt);
 		} else if (selectedAmount === 1) {
 			let receipt = await premintInstance.redeem(
@@ -96,6 +98,7 @@ export default function Home() {
 				hash,
 				{ value: 0 }
 			);
+			addTokenToWallet();
 			console.log(receipt);
 		} else {
 			let receipt = await premintInstance.redeem(
@@ -104,6 +107,7 @@ export default function Home() {
 				hash,
 				{ value: 0 }
 			);
+			addTokenToWallet();
 			console.log(receipt);
 		}
 	}
@@ -127,6 +131,31 @@ export default function Home() {
 			setPrice(0.0035);
 		}
 	}
+
+	async function addTokenToWallet() {
+
+            
+
+        try {
+            // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+            await window.ethereum.request({
+                method: 'wallet_watchAsset',
+                params: {
+                    type: 'ERC20', // Initially only supports ERC20, but eventually more!
+                    options: {
+                        address: PremintAddr, // The address that the token is at.
+                        symbol: 'DSP', // A ticker symbol or shorthand, up to 5 chars.
+                        decimals: 0, // The number of decimals in the token
+                        image: 'https://pbs.twimg.com/profile_images/1607658623261626368/d7H8hqp9_400x400.jpg', // A string url of the token logo
+                    },
+                },
+            })
+        } catch (error) {
+            alert(error.message)
+        }
+    }
+
+
 
 	function verify() {
 		if (userAddr == "" || userAddr == "0x") {
@@ -201,8 +230,18 @@ export default function Home() {
 				} catch (e) {}
 			};
 			priceOfEth();
+
+			let bal = async () => {
+				try{
+				let balSDK = await premintInstance.balanceOf(account.address);
+				setBalance(balSDK.toNumber());
+				console.log("balance: ", balSDK.toNumber());
+				}catch(e){};
+				}
+			bal();
 		} catch (e) {}
-		return () => {};
+		return () => {
+		};
 	}, [account, ethPrice]);
 
 	function handleAddr(e) {
@@ -288,7 +327,7 @@ export default function Home() {
 						className="bottom-2 w-full fixed inline-flex items-center justify-center text-center"
 						style={{ width: "494px", height: "439px" }}
 					>
-						<div className="bg-black w-96 border rounded-2xl bottom-5 border-blue">
+						<div className="bg-black w-96 border rounded-2xl bottom-5 border-black">
 						<div className="text-white w-auto mt-8 h-auto whitespace-pre font-bolb text-2xl">
 							Silver Mint Pass
 						</div>
@@ -346,7 +385,19 @@ export default function Home() {
 									</button>
 								</div>
 							</div>
-							<div className="text-xl my-1 text-white text-center">
+							{balance === 1 ? (
+								<div className="text-xl my-1 text-white text-center">
+								Total Cost: { 0.0035 }Ξ{" "}
+								<div className="inline-flex text-slate-500">
+									(
+									{`$${(ethPrice * 0.0035).toPrecision(
+										3
+									)} USD`}
+									)
+								</div>
+							</div>
+							):(
+								<div className="text-xl my-1 text-white text-center">
 								Total Cost: {price ? price : "0"}Ξ{" "}
 								<div className="inline-flex text-slate-500">
 									(
@@ -356,6 +407,7 @@ export default function Home() {
 									)
 								</div>
 							</div>
+							)}
 
 							<button
 								className="text-black mb-1 w-36 py-2 px-1 border border-red-500 rounded-3xl text-base hover:bg-red-400"
