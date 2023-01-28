@@ -212,11 +212,11 @@ export default function Home() {
 	}
 
 	return (
-				<Background>
+				<Background style={{minHeight: '100vh'}}>
 				<Navbar />
 
-				 <div className="flex mt-52 h-full float-right mr-2 align-middle md:justify-end">
-					<ul>
+				 <div className="flex mt-52 h-full relative float-right mr-2 align-middle md:justify-end">
+					<ul >
 						{socials?.map((item) => (
 							<li key={item.name}>
 								<a href={item.href}>
@@ -242,7 +242,7 @@ export default function Home() {
 							<input
 								type="text"
 								placeholder="Wallet Address"
-								className="bg-gray-800 w-full text-white hover:bg-gray-900 px-2 py-2 rounded-lg font-bold mb-2"
+								className="bg-gray-800 w-full text-white hover:bg-gray-900 px-2 py-2 rounded-lg font-thin mb-2"
 								onChange={(e) => handleAddr(e)}
 							/>
 
@@ -273,7 +273,7 @@ export default function Home() {
 							<button
 								onClick={() => verify()}
 								style={{ backgroundColor: "#FE3301" }}
-								className="bg-red-500 mt-3 w-36 justify-center rounded-3xl text-black hover:bg-gray-900  px-2 py-2 font-bold mb-2 cursor-pointer"
+								className="text-black mb-1 w-36 py-2 px-1 border border-red-500 rounded-3xl text-base hover:bg-red-400"
 							>
 								Check Address
 							</button>
@@ -281,12 +281,14 @@ export default function Home() {
 					</div>
 				</div>
 
+
+
 				<div className="w-full h-full flex justify-center bottom-0 text-center items-center">
 					<div
-						className=" bottom-2 w-full absolute flex items-center justify-center text-center"
+						className="bottom-2 w-full fixed inline-flex items-center justify-center text-center"
 						style={{ width: "494px", height: "439px" }}
 					>
-						<div className="bg-black w-96 border rounded-2xl bottom-5 border-black">
+						<div className="bg-black w-96 border rounded-2xl bottom-5 border-blue">
 						<div className="text-white w-auto mt-8 h-auto whitespace-pre font-bolb text-2xl">
 							Silver Mint Pass
 						</div>
@@ -356,7 +358,7 @@ export default function Home() {
 							</div>
 
 							<button
-								className="bg-red-500 text-black mb-1 w-36 py-2 px-1 border border-red-500 rounded-3xl text-base hover:bg-red-400"
+								className="text-black mb-1 w-36 py-2 px-1 border border-red-500 rounded-3xl text-base hover:bg-red-400"
 								style={{ backgroundColor: "#FE3301" }}
 								onClick={(e) => handleMint(e)}
 							>
