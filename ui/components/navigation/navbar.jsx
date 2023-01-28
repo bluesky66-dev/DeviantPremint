@@ -15,9 +15,8 @@ export default function Navbar() {
                             alt="deviantLogo Logo"
 							width={120}
 							height={120}
-                            style={{  display: 'flex', objectFit: "contain", objectPosition: 'center' }}
+                            style={{  display: 'flex', objectFit: "contain", width: '100%', height: 'auto', position: 'relative'}}
 							/>
-							
                     </div>
 			</a>
 			<ConnectButton/>

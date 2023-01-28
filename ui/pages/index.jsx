@@ -7,7 +7,8 @@ import "react-circular-progressbar/dist/styles.css";
 import alchemy from "../utils/alchemy";
 import abi from "../utils/abi.json";
 import { PremintAddr } from "../utils/addr";
-import { Twitter } from "@web3uikit/icons";
+import background from '../public/background-min.png'
+import Background from "../components/navigation/background";
 
 export default function Home() {
 	const [selectedAmount, setSelectedAmount] = useState(1);
@@ -211,8 +212,7 @@ export default function Home() {
 	}
 
 	return (
-		<>
-			<div className="h-full">
+				<Background>
 				<Navbar />
 
 				 <div className="flex mt-52 h-full float-right mr-2 align-middle md:justify-end">
@@ -227,9 +227,9 @@ export default function Home() {
 					</ul>
 				</div>
 				
-				<div className="w-full h-full flex justify-center bottom-0 text-center items-center">
-					<div className="bottom-2 w-full absolute flex items-center justify-center text-center">
-						<div className="bg-black w-96 border rounded-2xl bottom-5 border-black">
+				<div className="w-full h-full flex flex-col justify-center bottom-0 text-center items-center">
+					<div className="w-full relative items-center justify-center text-center">
+						<div className="bg-black w-96 border rounded-2xl  border-black">
 						<div className="text-white w-auto mt-8 h-auto whitespace-pre font-bold text-2xl">
 							Whitelist Checker
 						</div>
@@ -368,7 +368,6 @@ export default function Home() {
 				</div>
 				
 				</div>
-			</div>
-		</>
+		</Background>
 	);
 }
