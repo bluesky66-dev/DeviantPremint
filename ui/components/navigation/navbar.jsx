@@ -10,17 +10,15 @@ import {
 	useAccount,
 	useSigner
 } from "wagmi";
-import { ethers } from "ethers";
 
 
 
 export default function Navbar() {
-	const { asPath } = useRouter()
 	const account = useAccount()
 	const {data: signer} = useSigner()
 	const [admin, setAdmin] = useState(false);
 	const premintInstance = useContract({
-		address: '0x98b5F17230D38c5471b6EF8305a65e3780d05675',
+		address: '0x8e81c0AA3Be57F8f664eD482B2dE26B0276aEd20',
 		abi: [
 			{
 			  "inputs": [],

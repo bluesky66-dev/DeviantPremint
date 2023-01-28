@@ -1,25 +1,24 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import { useContract, useAccount, useSigner } from "wagmi";
+import { useContract, useAccount, useSigner, useProvider, useConnect } from "wagmi";
 import { ethers } from "ethers";
+import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
+import { polygonMumbai } from "wagmi/chains";
 
 export default function Home() {
 	const [selectedAmount, setSelectedAmount] = useState(1);
-	const [userAddr, setUserAddr] = useState("");
-	const [addrs, setAddrs] = useState("");
-	const [amounts, setAmounts] = useState(0);
 	const [price, setPrice] = useState(0);
 	const [whitelisted, setWhitelisted] = useState(false);
 	const [numChecks, setNumChecks] = useState(0);
-	const [wlAddr, setWlAddr] = useState('');
-	const [hash, setHash] = useState(null);
+	const [hash, setHash] = useState('0x');
 	const { data: signer } = useSigner();
 	const account = useAccount();
+
 
 	const sigGiver = '0x7C5D8BC73041B16d6Fac2E3F2a8dE2F6397eC839';
 
 	const premintInstance = useContract({
-		address: "0x98b5F17230D38c5471b6EF8305a65e3780d05675",
+		address: "0x8e81c0AA3Be57F8f664eD482B2dE26B0276aEd20",
 		abi: [
 			{
 			  "inputs": [],
@@ -794,37 +793,11 @@ export default function Home() {
 		signerOrProvider: signer,
 	});
 
-	async function handleAirdrop(e) {
-		e.stopPropagation();
-		e.preventDefault();
-
-		if (!addrs || !amounts) {
-			console.log("address or amount error");
-		}
-
-		let receipt = await premintInstance.airdrop(addrs, amounts);
-		console.log(receipt);
-	}
-
-	function collectAddressArray(addressArray) {
-		addressArray = addressArray.split(",");
-		setAddrs(addressArray);
-		console.log(addressArray);
-	}
-
-	function collectAmountArray(amountArray) {
-		amountArray = amountArray.split(",");
-		setAmounts(amountArray);
-		console.log(amountArray);
-	}
-
-
-
 	const domain = {
 		name: "Deviants Silver Pass",
 		version: "1",
 		chainId: 80001,
-		verifyingContract: "0x98b5F17230D38c5471b6EF8305a65e3780d05675",
+		verifyingContract: "0x8e81c0AA3Be57F8f664eD482B2dE26B0276aEd20",
 	};
 
 	const types = {
@@ -918,6 +891,8 @@ export default function Home() {
 		}else if(WL.status === 205){
 			setWhitelisted(false)
 		}
+
+
 	}
 
 	useEffect(() => {

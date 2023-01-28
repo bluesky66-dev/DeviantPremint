@@ -10,6 +10,9 @@
 	},
 	"dependencies": {
 		"@rainbow-me/rainbowkit": "^0.8.1",
+		"@web3uikit/core": "^0.2.45",
+		"@web3uikit/icons": "^0.2.41",
+		"@web3uikit/web3": "^0.2.2",
 		"alchemy-sdk": "^2.3.0",
 		"eth-sig-util": "^3.0.1",
 		"ethers": "5.7.2",
