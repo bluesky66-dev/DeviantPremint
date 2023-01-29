@@ -10,13 +10,13 @@ import Background from "../components/navigation/background";
 
 export default function Home() {
 	const [selectedAmount, setSelectedAmount] = useState(1);
-	const [balance, setBalance] = useState(1);
+	const [balance, setBalance] = useState(0);
 	const [amountSold, setAmountSold] = useState(0);
 	const [userAddr, setUserAddr] = useState("");
 	const [price, setPrice] = useState(0);
 	const [whitelisted, setWhitelisted] = useState(false);
 	const [isHidden, setIsHidden] = useState(true);
-	const [ethPrice, setEthPrice] = useState(1400);
+	const [ethPrice, setEthPrice] = useState();
 	const [numChecks, setNumChecks] = useState(0);
 	const [hash, setHash] = useState("0x");
 	const { data: signer } = useSigner();
@@ -73,6 +73,20 @@ export default function Home() {
 			icon: "/discordSvg.svg",
 		},
 	];
+	async function getBal(){
+		try {
+			let balSDK = await premintInstance.balanceOf(
+				account.address
+			);
+			setBalance(balSDK.toNumber());
+			let tokenIds = await premintInstance.getNextId();
+			setAmountSold(tokenIds.toNumber());
+		} catch (e) {}
+	};
+	async function openWindow() {
+		await new Promise(resolve => setTimeout(resolve, 1000));
+		window.open("https://testnets.opensea.io/account", "_blank");
+	  }
 
 	async function handleMint(e) {
 		e.stopPropagation();
@@ -87,8 +101,11 @@ export default function Home() {
 				hash,
 				{ value: costCharge }
 			);
-			addTokenToWallet();
 			console.log(receipt);
+			await getBal();
+			
+			await openWindow();
+
 		} else if (selectedAmount === 1) {
 			let receipt = await premintInstance.redeem(
 				account.address,
@@ -96,8 +113,11 @@ export default function Home() {
 				hash,
 				{ value: 0 }
 			);
-			addTokenToWallet();
+			await getBal();
 			console.log(receipt);
+			(() => {
+        		window.open("https://opensea.io/collections", "_blank");
+    		})();
 		} else {
 			let receipt = await premintInstance.redeem(
 				account.address,
@@ -105,50 +125,64 @@ export default function Home() {
 				hash,
 				{ value: 0 }
 			);
-			addTokenToWallet();
+			await getBal();
 			console.log(receipt);
+			await openWindow();
 		}
 	}
 
 	function priceSetter() {
+		if(balance === 0 && selectedAmount === 0) {
+			setSelectedAmount(0)
+			setPrice(0)
+		}
+
+
 		if (selectedAmount === 1) {
-			setSelectedAmount(2);
-			setPrice(0.0035);
+			if(balance === 0){
+				setSelectedAmount(2);
+				setPrice(0.0035);
+			}else if(balance === 1){
+				setSelectedAmount(1);
+				setPrice(0.0035);
+			}
 		} else if (selectedAmount === 2) {
-			setSelectedAmount(1);
-			setPrice(0);
+			if(balance === 0){
+				setSelectedAmount(1);
+				setPrice(0);
+			}else if(balance === 1){
+				setSelectedAmount(1);
+				setPrice(0.0035);
+			}
 		}
 	}
 
 	function priceDecreaser() {
+		if(balance === 0 && selectedAmount === 0) {
+			setSelectedAmount(1)
+			setPrice(0)
+		}
+
+
 		if (selectedAmount === 2) {
-			setSelectedAmount(1);
-			setPrice(0);
+			if(balance === 0){
+				setSelectedAmount(1);
+				setPrice(0);
+			}else if(balance === 1){
+				setSelectedAmount(1);
+				setPrice(0.0035);
+			}
 		} else if (selectedAmount === 1) {
-			setSelectedAmount(2);
-			setPrice(0.0035);
+			if(balance === 0){
+				setSelectedAmount(2);
+				setPrice(0.0035);
+			}else if(balance === 1){
+				setSelectedAmount(1);
+				setPrice(0.0035);
+			}
 		}
 	}
 
-	async function addTokenToWallet() {
-		try {
-			// wasAdded is a boolean. Like any RPC method, an error may be thrown.
-			await window.ethereum.request({
-				method: "wallet_watchAsset",
-				params: {
-					type: "ERC20", // Initially only supports ERC20, but eventually more!
-					options: {
-						address: PremintAddr, // The address that the token is at.
-						symbol: "DSP", // A ticker symbol or shorthand, up to 5 chars.
-						decimals: 0, // The number of decimals in the token
-						image: "https://pbs.twimg.com/profile_images/1607658623261626368/d7H8hqp9_400x400.jpg", // A string url of the token logo
-					},
-				},
-			});
-		} catch (error) {
-			alert(error.message);
-		}
-	}
 
 	function verify() {
 		if (userAddr == "" || userAddr == "0x") {
@@ -174,7 +208,8 @@ export default function Home() {
 			}
 			setIsHidden(false);
 		} catch (e) {
-			console.log(e);
+			setIsHidden(false);
+			setWhitelisted(false);
 		}
 	}
 
@@ -182,7 +217,7 @@ export default function Home() {
 		try {
 			const isWL = await fetch(
 				`https://dmb-six.vercel.app/api/getSignature?address=${addr}`,
-				{ method: "GET" }
+				{ method: "GET", mode: "no-cors" }
 			);
 
 			const WL = await isWL.json();
@@ -207,6 +242,7 @@ export default function Home() {
 		}
 	}
 
+
 	useEffect(() => {
 		getAddrStatus(account.address);
 		try {
@@ -225,20 +261,11 @@ export default function Home() {
 
 
 
-			let bal = async () => {
-				try {
-					let balSDK = await premintInstance.balanceOf(
-						account.address
-					);
-					setBalance(balSDK.toNumber());
-					let tokenIds = await premintInstance.getNextId();
-					setAmountSold(tokenIds.toNumber());
-				} catch (e) {}
-			};
-			bal();
+			
+			getBal();
 		} catch (e) {}
 		return () => {};
-	}, [account, ethPrice]);
+	}, [account, ethPrice, amountSold]);
 
 	function handleAddr(e) {
 		e.stopPropagation();
@@ -248,6 +275,9 @@ export default function Home() {
 
 	return (
 		<>
+		<head>
+			<title>Deviant Silver Pass</title>
+		</head>
 			<Background style={{ minHeight: "100vh" }}>
 				<Navbar />
 
@@ -268,6 +298,8 @@ export default function Home() {
 				</div>
 
 				<div className="w-full h-full flex flex-col justify-center bottom-0 text-center items-center">
+
+
 					<div className="w-full relative items-center justify-center text-center">
 						<div className="bg-black w-96 border rounded-2xl  border-black">
 							<div className="text-white w-auto mt-8 h-auto whitespace-pre font-bold text-2xl">
@@ -304,7 +336,7 @@ export default function Home() {
 										<div
 											id="wlStatus"
 											style={{ color: "#FE3301" }}
-											className="ml-2 mt-2"
+											className="ml-2 mt-2 mb-2"
 										>
 											❌ Sorry, you are not on the
 											whitelist.
@@ -315,7 +347,7 @@ export default function Home() {
 								<button
 									onClick={() => verify()}
 									style={{ backgroundColor: "#FE3301" }}
-									className="text-black mb-1 w-36 py-2 px-1 border border-red-500 rounded-3xl text-base hover:bg-red-400"
+									className="text-black mb-1 w-36 py-2 px-1 border-red-500 rounded-3xl text-base hover:bg-red-400"
 								>
 									Check Address
 								</button>
@@ -323,9 +355,9 @@ export default function Home() {
 						</div>
 					</div>
 
-					<div className="w-full h-full flex justify-center bottom-0 text-center items-center">
+					<div className="w-full h-full flex justify-center text-center items-center">
 						<div
-							className="bottom-2 w-full fixed inline-flex items-center justify-center text-center"
+							className="bottom-10 w-full fixed inline-flex items-center justify-center text-center"
 							style={{ width: "494px", height: "439px" }}
 						>
 							<div className="bg-black w-96 border rounded-2xl bottom-5 border-black">
@@ -365,21 +397,25 @@ export default function Home() {
 													−
 												</span>
 											</button>
-											<input
+											{balance === 0 || balance === 1 ? (<input
 												type="select"
 												disabled
 												className="w-20 font-semibold text-white text-center justify-center align-middle bg-transparent outline-none"
 												value={
 													selectedAmount
 														? selectedAmount.toString()
-														: "0"
+														: '0'
 												}
-												onChange={() => {
-													setSelectedAmount(
-														e.target.value
-													);
-												}}
+												
+											/>):(
+												<input
+												type="select"
+												disabled
+												className="w-20 font-semibold text-white text-center justify-center align-middle bg-transparent outline-none"
+												value='0'
+												
 											/>
+											)}
 											<button className="flex mx-auto text-red-500 hover:border-gray-500 hover:text-gray-600 h-10 w-10 justify-center items-center outline-none">
 												<span
 													className="text-2xl text-white font-thin"
@@ -405,7 +441,7 @@ export default function Home() {
 										</div>
 									) : (
 										<div className="text-xl my-1 text-white text-center">
-											Total Cost: {price ? price : "0"}Ξ{" "}
+											Total Cost: {price ? price : 0}Ξ{" "}
 											<div className="inline-flex text-slate-500">
 												(
 												{`$${(
@@ -417,9 +453,9 @@ export default function Home() {
 									)}
 
 									<button
-										className="text-black mb-1 w-36 py-2 px-1 border border-red-500 rounded-3xl text-base hover:bg-red-400"
-										style={{ backgroundColor: "#FE3301" }}
+										className="text-black mb-8 mt-2 w-36 py-2 px-1 bg-red rounded-3xl text-base hover:bg-red-400 disabled:bg-slate-800 disabled:cursor-not-allowed"
 										onClick={(e) => handleMint(e)}
+										disabled={balance === 2 ? true : false}
 									>
 										Mint Now
 									</button>

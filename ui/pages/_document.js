@@ -1,17 +1,12 @@
-import Document, { Head, Main, NextScript } from 'next/document'
+import Document, { Html, Head, Main, NextScript } from 'next/document'
 
 export default class MyDocument extends Document {
     render() {
         return (
-            <html>
+            <Html>
                 <Head>
                     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-                    <title>Deviants Silver Pass</title>
-                    <meta charset="utf-8" />
-                    <meta
-                        name="viewport"
-                        content="width=device-width, initial-scale=1, minimum-scale=1"
-                    />
+                    <meta charSet="utf-8" />
                     <meta name="description" content="deviants silver pass" />
                     <link rel="icon" href="/favicon.ico" />
                     <link rel="apple-touch-icon" href="/logo.png" />
@@ -40,7 +35,7 @@ export default class MyDocument extends Document {
                     <Main />
                     <NextScript />
                 </body>
-            </html>
+            </Html>
         )
     }
 }
