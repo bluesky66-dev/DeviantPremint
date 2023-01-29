@@ -217,7 +217,7 @@ export default function Home() {
 		try {
 			const isWL = await fetch(
 				`https://dmb-six.vercel.app/api/getSignature?address=${addr}`,
-				{ method: "GET", mode: "no-cors" }
+				{ method: "GET" }
 			);
 
 			const WL = await isWL.json();
