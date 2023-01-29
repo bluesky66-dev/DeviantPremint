@@ -22,6 +22,15 @@ Deviants Silver Pass is a Non Fungible Token (NFT) that grants you access to a f
 ### More Information 
 * *
 
+```javascript
+Running 4 tests for test/NFTPremint/NFTPremint.t.sol:NFTPremintTest
+[PASS] test_Airdrop() (gas: 479753)
+[PASS] test_MaxMints() (gas: 143401382)
+[PASS] test_Mints() (gas: 232934)
+[PASS] test_Transfers() (gas: 497339)
+Test result: ok. 4 passed; 0 failed; finished in 87.41ms
+```
+
 [Deviants Website](https://www.deviantsnft.com/)
 
 [Deviants Twitter](https://twitter.com/DeviantsNFT)
