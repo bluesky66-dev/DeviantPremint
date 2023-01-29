@@ -1,9 +1,9 @@
-# Deviant Silver Pass
+# Deviants Silver Pass
 
 The Silver Pass NFT for Deviants preminting.
 
 ### Introduction
-Deviant Silver Pass is a Non Fungible Token (NFT) that grants you access to Deviant Silver Pass.
+Deviants Silver Pass is a Non Fungible Token (NFT) that grants you access to a free Deviants mint.
 * * *
 
 ### How to Use

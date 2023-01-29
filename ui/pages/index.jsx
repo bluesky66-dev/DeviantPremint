@@ -276,7 +276,7 @@ export default function Home() {
 	return (
 		<>
 		<head>
-			<title>Deviant Silver Pass</title>
+			<title>Deviants Silver Pass</title>
 		</head>
 			<Background style={{ minHeight: "100vh" }}>
 				<Navbar />
